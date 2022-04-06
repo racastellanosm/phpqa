@@ -28,7 +28,7 @@ trait RoboAdapter
         }
     }
 
-    private function isRoboVersionOne()
+    private function isRoboVersionOne(): ?bool
     {
         static $isVersionOne = null;
         if ($isVersionOne === null) {

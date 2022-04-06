@@ -1,5 +1,5 @@
 {
-    "name": "edgedesign/phpqa",
+    "name": "ci-tools/lib-phpqa",
     "type": "library",
     "description": "Analyze PHP code with one command.",
     "keywords": ["QA", "code analysis", "static analysis"],
@@ -14,11 +14,6 @@
             "email": "raul@equationlabs.io"
         }
     ],
-    "support": {
-        "issues": "https://github.com/EdgedesignCZ/phpqa/issues",
-        "source": "https://github.com/EdgedesignCZ/phpqa",
-        "docs": "https://edgedesigncz.github.io/phpqa/"
-    },
     "bin": ["phpqa"],
     "require": {
         "php": ">=8.0",
@@ -51,7 +46,6 @@
         "qossmic/deptrac-shim": "Enforce rules for dependencies between software layers"
     },
     "require-dev": {
-        "hamcrest/hamcrest-php": ">=2.0.1",
         "phpunit/phpunit": ">=9.5"
     },
     "autoload": {
@@ -62,9 +56,11 @@
     },
     "autoload-dev": {
         "files": [
-            "tests/.phpunit/fix-testcase.php",
-            "vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest.php"
+            "tests/.phpunit/fix-testcase.php"
         ]
+    },
+    "scripts": {
+        "run:tests": "vendor/bin/phpunit --configuration phpunit.xml --testdox --color=always"
     },
     "config": {
         "optimize-autoloader": true

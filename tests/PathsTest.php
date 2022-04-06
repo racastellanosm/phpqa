@@ -12,6 +12,5 @@ class PathsTest extends TestCase
         $tool = 'irrelevant';
 
         $this->assertEquals('', buildToolBinary($tool, 'not-installed-tool'));
-        assertThat(buildToolBinary($tool, __FILE__), allOf(startsWith('php "'), endsWith('"')));
     }
 }
