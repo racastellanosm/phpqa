@@ -2,9 +2,11 @@
 
 namespace Edge\QA;
 
-class IgnoredPathsTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class IgnoredPathsTest extends TestCase
 {
-    private $operatingSystem = 'Linux';
+    private string $operatingSystem = 'Linux';
 
     private function ignore($tool, $dirs, $files)
     {
@@ -17,9 +19,9 @@ class IgnoredPathsTest extends \PHPUnit_Framework_TestCase
     public function testNoOptionWhenNothingIsIgnored($tool)
     {
         if ($tool == 'psalm') {
-            assertThat($this->ignore($tool, '', ' '), is(['file' => [], 'directory' => []]));
+            $this->assertEquals(['file' => [], 'directory' => []], $this->ignore($tool, '', ' '));
         } else {
-            assertThat($this->ignore($tool, '', ' '), is(emptyString()));
+            $this->assertEmpty($this->ignore($tool, '', ' '));
         }
     }
 
@@ -27,17 +29,18 @@ class IgnoredPathsTest extends \PHPUnit_Framework_TestCase
     public function testIgnoreDirectoriesAndFiles($tool, $expectedOptions, $os = null)
     {
         $this->operatingSystem = $os ?: $this->operatingSystem;
-        assertThat(
+
+        $this->assertEquals(
             $expectedOptions,
-            is([
+            [
                 'both' => $this->ignore($tool, 'app/config,vendor', 'autoload.php,RoboFile.php'),
                 'dirs' => $this->ignore($tool, 'app/config,vendor', ''),
                 'files' => $this->ignore($tool, '', 'autoload.php,RoboFile.php'),
-            ])
+            ]
         );
     }
 
-    public function provideTools()
+    public function provideTools(): array
     {
         return array(
             array(

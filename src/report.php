@@ -3,18 +3,23 @@
 namespace Edge\QA;
 
 use DOMDocument;
+use ErrorException;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use Twig\Loader\FilesystemLoader;
 use XSLTProcessor;
 use Exception;
 
+/**
+ * @throws RuntimeError|SyntaxError|LoaderError
+ */
 function twigToHtml($template, array $params, $outputFile)
 {
-    if (class_exists('Twig_Environment')) {
-        $loader = new \Twig_Loader_Filesystem(__DIR__ . '/../app/report');
-        $twig = new \Twig_Environment($loader);
-    } else {
-        $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../app/report');
-        $twig = new \Twig\Environment($loader);
-    }
+    $loader = new FilesystemLoader(__DIR__ . '/../app/report');
+    $twig = new Environment($loader);
+
     $html = $twig->render($template, $params);
     file_put_contents($outputFile, $html);
 }
@@ -51,14 +56,14 @@ function xmlToHtml(array $xmlDocuments, $style, $outputFile, array $params = [])
     }
 }
 
-function xmlXpaths($xmlFile, array $xpathQueries)
+function xmlXpaths($xmlFile, array $xpathQueries): array
 {
     convertPhpErrorsToExceptions();
     $matchedElements = 0;
     try {
         $xml = simplexml_load_file($xmlFile);
         foreach ($xpathQueries as $xpathQuery) {
-            $matchedElements += count($xml->xpath($xpathQuery));
+            $matchedElements += count($xml->xpath($xpathQuery ?? ''));
         }
         return [$matchedElements, ''];
     } catch (Exception $e) {
@@ -75,9 +80,12 @@ function convertPhpErrorsToExceptions()
     }
 }
 
+/**
+ * @throws ErrorException
+ */
 function phpErrorToException($severity, $message, $filename, $lineno)
 {
     if (error_reporting() & $severity) {
-        throw new \ErrorException($message, 0, $severity, $filename, $lineno);
+        throw new ErrorException($message, 0, $severity, $filename, $lineno);
     }
 }

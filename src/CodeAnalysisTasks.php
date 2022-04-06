@@ -51,7 +51,7 @@ trait CodeAnalysisTasks
             'report' => null,
             'execution' => null,
         ]
-    ) {
+    ): int {
         $cliOptions = $this->normalizeCliOptions($opts);
         $this->loadConfig($cliOptions);
         $this->ciClean();
@@ -62,7 +62,7 @@ trait CodeAnalysisTasks
         return $this->buildSummary();
     }
 
-    private function normalizeCliOptions(array $options)
+    private function normalizeCliOptions(array $options): array
     {
         if (!$options['analyzedDirs'] && $options['analyzedDir']) {
             $options['analyzedDirs'] = $options['analyzedDir'];

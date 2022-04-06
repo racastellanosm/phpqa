@@ -8,17 +8,17 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class AssetsLoader
 {
-    private $output;
+    private OutputInterface $output;
     
     public function __construct(OutputInterface $o)
     {
         $this->output = $o;
     }
 
-    public function __invoke(Options $o, array $assets)
+    public function __invoke(Options $o, array $assets): array
     {
         if ($o->isOfflineReport) {
-            $this->writeln('Dowloading assets...');
+            $this->writeln('Downloading assets...');
             $progressBar = new ProgressBar($this->output);
             $progressBar->start(count($assets));
             $start = microtime(true);
@@ -34,7 +34,7 @@ class AssetsLoader
         return $assets;
     }
 
-    private function downloadUrl($url)
+    private function downloadUrl($url): bool|string
     {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new \InvalidArgumentException("Invalid url '{$url}'");

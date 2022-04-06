@@ -2,15 +2,17 @@
 
 namespace Edge\QA\Tools;
 
-class GetVersionsTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class GetVersionsTest extends TestCase
 {
     /** @dataProvider provideComposerVersion */
     public function testNormalizeVersion($version, $expectedVersion)
     {
-        assertThat(GetVersions::normalizeSemver($version), is($expectedVersion));
+        $this->assertEquals($expectedVersion, GetVersions::normalizeSemver($version));
     }
 
-    public function provideComposerVersion()
+    public function provideComposerVersion(): array
     {
         return [
             'full semver' => ['2.7.4', '2.7.4'],
@@ -22,10 +24,10 @@ class GetVersionsTest extends \PHPUnit_Framework_TestCase
     /** @dataProvider provideCliVersion */
     public function testCliVersion($cliOutput, $expectedVersion)
     {
-        assertThat(GetVersions::extractVersionFromConsole($cliOutput), is($expectedVersion));
+        $this->assertEquals($expectedVersion, GetVersions::extractVersionFromConsole($cliOutput));
     }
 
-    public function provideCliVersion()
+    public function provideCliVersion(): array
     {
         return [
             'semver at the end' => ['irrelevant 0.12.86', '0.12.86'],
@@ -43,10 +45,10 @@ class GetVersionsTest extends \PHPUnit_Framework_TestCase
     /** @dataProvider provideComparedVersions */
     public function testCompareVersions($toolVersion, $operator, $version, $expectedResult)
     {
-        assertThat(GetVersions::compareVersions($toolVersion, $operator, $version), is($expectedResult));
+        $this->assertEquals($expectedResult, GetVersions::compareVersions($toolVersion, $operator, $version));
     }
 
-    public function provideComparedVersions()
+    public function provideComparedVersions(): array
     {
         return [
             'no version' => ['', '>', '1', false],

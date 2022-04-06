@@ -11,7 +11,7 @@ Analyze PHP code with one command.
 
 ## Requirements
 
-- PHP >= 5.4.0
+- PHP >= 8.0
 - `xsl` extension for [HTML reports](#html-reports)
 
 ## Why?

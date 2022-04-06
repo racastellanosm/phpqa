@@ -2,13 +2,16 @@
 
 namespace Edge\QA;
 
-class PathsTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PathsTest extends TestCase
 {
     public function testPathToBinaryIsEscaped()
     {
         define('COMPOSER_BINARY_DIR', '/home/user with space/phpqa/vendor/bin');
         $tool = 'irrelevant';
+
+        $this->assertEquals('', buildToolBinary($tool, 'not-installed-tool'));
         assertThat(buildToolBinary($tool, __FILE__), allOf(startsWith('php "'), endsWith('"')));
-        assertThat(buildToolBinary($tool, 'not-installed-tool'), is(''));
     }
 }

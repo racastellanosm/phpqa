@@ -2,23 +2,28 @@
 
 namespace Edge\QA;
 
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
+
 /** @SuppressWarnings(PHPMD.TooManyPublicMethods) */
-class RunningToolTest extends \PHPUnit_Framework_TestCase
+class RunningToolTest extends TestCase
 {
-    private $errorsCountInXmlFile = 2;
+
+    private int $errorsCountInXmlFile = 2;
 
     public function testBuildOptionWithDefinedSeparator()
     {
         $tool = new RunningTool('tool', ['optionSeparator' => ' ']);
-        assertThat($tool->buildOption('option', ''), is('--option'));
-        assertThat($tool->buildOption('option', 'value'), is('--option value'));
-        assertThat($tool->buildOption('option', 0), is('--option 0'));
+
+        $this->assertEquals('--option', $tool->buildOption('option', ''));
+        $this->assertEquals('--option value', $tool->buildOption('option', 'value'));
+        $this->assertEquals('--option 0', $tool->buildOption('option', 0));
     }
 
     public function testMarkSuccessWhenXPathIsNotDefined()
     {
         $tool = new RunningTool('tool', ['errorsXPath' => null]);
-        assertThat($tool->analyzeResult(), is([true, '']));
+        $this->assertEquals([true, ''], $tool->analyzeResult());
     }
 
     /** @dataProvider provideAllowedErrorsForNonexistentFile */
@@ -30,11 +35,12 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
             'allowedErrorsCount' => $allowedErrors,
         ]);
         list($isOk, $error) = $tool->analyzeResult();
-        assertThat($isOk, is($expectedIsOk));
-        assertThat($error, containsString('not found'));
+
+        $this->assertEquals($expectedIsOk, $isOk);
+        $this->assertStringContainsString('not found', $error);
     }
 
-    public function provideAllowedErrorsForNonexistentFile()
+    public function provideAllowedErrorsForNonexistentFile(): array
     {
         return [
             'success when allowed errors are not defined' => [null, true],
@@ -50,10 +56,11 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
             'errorsXPath' => '//errors/error',
             'allowedErrorsCount' => $allowedErrors
         ]);
-        assertThat($tool->analyzeResult(), is([$isOk, $this->errorsCountInXmlFile]));
+
+        $this->assertEquals([$isOk, $this->errorsCountInXmlFile], $tool->analyzeResult());
     }
 
-    public function provideAllowedErrors()
+    public function provideAllowedErrors(): array
     {
         return [
             'success when allowed errors are not defined' => [null, true],
@@ -72,8 +79,9 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
             ],
             'allowedErrorsCount' => 0,
         ]);
+
         $tool->errorsType = true;
-        assertThat($tool->analyzeResult(), is([false, 1]));
+        $this->assertEquals([false, 1], $tool->analyzeResult());
     }
 
     /** @dataProvider provideMultipleXpaths */
@@ -86,10 +94,11 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
             ],
             'allowedErrorsCount' => 3,
         ]);
-        assertThat($tool->analyzeResult(), is($expectedResult));
+
+        $this->assertEquals($expectedResult, $tool->analyzeResult());
     }
 
-    public function provideMultipleXpaths()
+    public function provideMultipleXpaths(): array
     {
         return [
             'multiple elements' => [['//errors/error', '//errors/warning'], [true, 2 + 1]],
@@ -100,19 +109,17 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
     /** @dataProvider provideProcess */
     public function testAnalyzeExitCodeInCliMode($allowedErrors, $exitCode, array $expectedResult)
     {
-        if (version_compare(PHP_VERSION, '7.2.0') >= 0) {
-            $this->markTestSkipped('Skipped on PHP 7.2');
-        }
         $tool = new RunningTool('tool', [
             'allowedErrorsCount' => $allowedErrors
         ]);
-        $tool->process = $this->prophesize('Symfony\Component\Process\Process')
-            ->getExitCode()->willReturn($exitCode)
-            ->getObjectProphecy()->reveal();
-        assertThat($tool->analyzeResult(true), is($expectedResult));
+
+        $tool->process = $this->createMock(Process::class);
+        $tool->process->expects($this->once())->method('getExitCode')->willReturn($exitCode);
+
+        $this->assertEquals($expectedResult, $tool->analyzeResult(true));
     }
 
-    public function provideProcess()
+    public function provideProcess(): array
     {
         return [
             'success when exit code = 0' => [0, 0, [true, 0]],
@@ -126,6 +133,7 @@ class RunningToolTest extends \PHPUnit_Framework_TestCase
         $tool = new RunningTool('phpcs', []);
         $tool->userReports['dir/path.php'] = 'My report';
         $report = $tool->getHtmlRootReports()[0];
-        assertThat($report['id'], is('phpcs-dir-path-php'));
+
+        $this->assertEquals('phpcs-dir-path-php', $report['id']);
     }
 }

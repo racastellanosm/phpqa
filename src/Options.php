@@ -5,25 +5,25 @@ namespace Edge\QA;
 class Options
 {
     /** @var string[] */
-    private $analyzedDirs;
+    private array $analyzedDirs;
     /** @var string */
-    public $buildDir;
+    public string $buildDir;
     /** @var IgnoredPaths */
-    public $ignore;
+    public IgnoredPaths $ignore;
     /** @var array */
-    private $allowedTools;
+    private array $allowedTools;
 
     /** @var boolean */
-    public $isSavedToFiles;
+    public bool $isSavedToFiles;
     /** @var boolean */
-    public $isOutputPrinted;
+    public bool $isOutputPrinted;
     /** @var boolean */
-    public $hasReport;
+    public bool $hasReport;
     /** @var boolean */
-    public $isOfflineReport;
+    public bool $isOfflineReport;
 
     /** @var boolean */
-    public $isParallel;
+    public bool $isParallel;
 
     public function __construct(array $options)
     {
@@ -60,7 +60,7 @@ class Options
         return $commonPath ? ($commonPath . DIRECTORY_SEPARATOR) : '';
     }
 
-    public function getAnalyzedDirs($separator = null)
+    public function getAnalyzedDirs($separator = null): array|string
     {
         return $separator ? implode($separator, $this->analyzedDirs) : $this->analyzedDirs;
     }
@@ -80,7 +80,7 @@ class Options
         }
     }
 
-    public function buildRunningTools(array $tools)
+    public function buildRunningTools(array $tools): array
     {
         $allowed = array();
         foreach ($tools as $tool => $config) {
@@ -98,7 +98,7 @@ class Options
         return $this->sortTools($allowed);
     }
 
-    private function sortTools(array $allowed)
+    private function sortTools(array $allowed): array
     {
         $keys = array_keys($this->allowedTools);
         uksort(

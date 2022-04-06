@@ -2,49 +2,61 @@
 
 namespace Edge\QA;
 
-class ReportTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+
+class ReportTest extends TestCase
 {
     private $output;
     private $phplocXsl;
     private $xmlParams = ['bootstrap.min.css' => '','bootstrap.min.js' => '', 'jquery.min.js' => ''];
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->output = __DIR__ . "/result.html";
         $this->phplocXsl = __DIR__ . "/../../app/report/phploc.xsl";
+
+        parent::setUp();
     }
 
+    /**
+     * @throws RuntimeError|SyntaxError|LoaderError
+     */
     public function testConvertTwigToHtml()
     {
         twigToHtml("phpqa.html.twig", array('tools' => array()), $this->output);
-        assertThat(file_get_contents($this->output), containsString('phpqa'));
+        $this->assertNotFalse(strpos(file_get_contents($this->output), 'phpqa' ));
     }
 
     /** @dataProvider provideXml */
     public function testConvertXmlToHtml($xml, $assertOutput)
     {
         xmlToHtml([__DIR__ . "/{$xml}"], $this->phplocXsl, $this->output, $this->xmlParams);
-        assertThat(file_get_contents($this->output), $assertOutput);
+        $this->assertNotFalse(strpos(file_get_contents($this->output), $assertOutput));
     }
 
-    public function provideXml()
+    public function provideXml(): array
     {
-        return array(
-            'create html' => array('phploc.xml', containsString('</table>')),
-            'create empty file if something went south' => array('invalid.xml', not(containsString('</table>')))
-        );
+        return [
+            'create html' => ['phploc.xml', '</table>'],
+            'create empty file if something went south' => ['invalid.xml', '']
+        ];
     }
 
     public function testIgnoreMissingXmlDocuments()
     {
         xmlToHtml([], $this->phplocXsl, $this->output, $this->xmlParams);
-        assertThat(file_exists($this->output), is(false));
+        $this->assertFalse(file_exists($this->output));
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         if (file_exists($this->output)) {
             unlink($this->output);
         }
+
+        parent::tearDown();
     }
 }

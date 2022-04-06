@@ -2,12 +2,12 @@
 
 namespace Edge\QA;
 
-function buildToolBinary($tool, $customBinary = null)
+function buildToolBinary($tool, $customBinary = null): string
 {
     return buildSafeBinary($customBinary ?: (COMPOSER_BINARY_DIR . $tool));
 }
 
-function buildSafeBinary($unsafeBinary)
+function buildSafeBinary($unsafeBinary): string
 {
     if (!$unsafeBinary || !is_file($unsafeBinary)) {
         return "";
@@ -18,7 +18,7 @@ function buildSafeBinary($unsafeBinary)
     }
 }
 
-function escapePath($path)
+function escapePath($path): string
 {
     return "\"{$path}\"";
 }

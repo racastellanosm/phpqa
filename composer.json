@@ -8,6 +8,10 @@
         {
             "name": "Zdenek Drahos",
             "email": "drahoszdenek@gmail.com"
+        },
+        {
+            "name": "Raul Castellanos",
+            "email": "raul@equationlabs.io"
         }
     ],
     "support": {
@@ -17,17 +21,20 @@
     },
     "bin": ["phpqa"],
     "require": {
-        "php": ">=5.4",
+        "php": ">=8.0",
+        "ext-dom": "*",
         "ext-xsl": "*",
-        "consolidation/robo": "~0.5|>=1",
+        "ext-simplexml": "*",
+        "ext-curl": "*",
+        "consolidation/robo": "^3.0",
         "phpmd/phpmd" : "*",
         "phploc/phploc": "*",
-        "symfony/dependency-injection": ">=2.8.50",
-        "symfony/filesystem": ">=2.8",
-        "symfony/process": ">=2.8",
-        "symfony/finder": ">=2.8",
-        "symfony/yaml": ">=2.8",
-        "twig/twig": "~1.38|~2.7|~3",
+        "symfony/dependency-injection": ">=6.0",
+        "symfony/filesystem": "6.*",
+        "symfony/process": "6.*",
+        "symfony/finder": "6.*",
+        "symfony/yaml": "6.*",
+        "twig/twig": "*",
         "pdepend/pdepend": "*",
         "sebastian/phpcpd": "*",
         "squizlabs/php_codesniffer": "*",
@@ -45,7 +52,7 @@
     },
     "require-dev": {
         "hamcrest/hamcrest-php": ">=2.0.1",
-        "phpunit/phpunit": ">=4.8.28"
+        "phpunit/phpunit": ">=9.5"
     },
     "autoload": {
         "psr-4": {

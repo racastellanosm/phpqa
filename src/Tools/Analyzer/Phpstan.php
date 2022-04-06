@@ -17,7 +17,7 @@ class Phpstan extends \Edge\QA\Tools\Tool
         ],
     );
 
-    public function __invoke()
+    public function __invoke(): array
     {
         $createAbsolutePaths = function (array $relativeDirs) {
             return array_values(array_filter(array_map(
@@ -32,19 +32,19 @@ class Phpstan extends \Edge\QA\Tools\Tool
         if (file_exists($defaultConfig)) {
             $config = \Nette\Neon\Neon::decode(file_get_contents($defaultConfig));
             $config['parameters'] += [
-                'excludes_analyse' => [],
+                'excludePaths' => [],
             ];
         } else {
             $config = [
                 'parameters' => [
                     'autoload_directories' => $createAbsolutePaths($this->options->getAnalyzedDirs()),
-                    'excludes_analyse'     => [],
+                    'excludePaths'     => [],
                 ],
             ];
         }
 
-        $config['parameters']['excludes_analyse'] = array_merge(
-            $config['parameters']['excludes_analyse'],
+        $config['parameters']['excludePaths'] = array_merge(
+            $config['parameters']['excludePaths'],
             $createAbsolutePaths($this->options->ignore->phpstan())
         );
 
@@ -65,7 +65,7 @@ class Phpstan extends \Edge\QA\Tools\Tool
         return $args;
     }
 
-    private function getErrorFormatOption()
+    private function getErrorFormatOption(): string
     {
         return $this->toolVersionIs('<', '0.10.3') ?  'errorFormat' : 'error-format';
     }
